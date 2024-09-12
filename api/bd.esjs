@@ -1,0 +1,42 @@
+importar knex desde 'knex'
+
+exportar const bd = knex({
+  client: 'mysql2',
+  connection: {
+    host: import.meta.env.VITE_DB_HOST,
+    port: import.meta.env.VITE_DB_PORT,
+    user: import.meta.env.VITE_DB_USER,
+    password: import.meta.env.VITE_DB_PASSWORD,
+    database: import.meta.env.VITE_DB_NAME,
+  },
+})
+
+exportar asincrono funcion migraciones() {
+  retornar bd.schema.createTableIfNotExists('tareas', tabla => {
+    tabla.increments('id')
+    tabla.string('nombre')
+    tabla.string('descripcion')
+    tabla.boolean('completada').defaultTo(falso)
+    tabla.timestamp('fechaCreacion').defaultTo(bd.fn.now())
+  })
+}
+
+exportar asincrono funcion crearTarea(nombre, descripcion) {
+  retornar bd('tareas').insert({ nombre, descripcion })
+}
+
+exportar asincrono funcion obtenerTareas() {
+  retornar bd('tareas').select('*').orderBy('fechaCreacion', 'desc')
+}
+
+exportar asincrono funcion eliminarTarea(id) {
+  retornar bd('tareas').where({ id }).delete()
+}
+
+exportar asincrono funcion completarTarea(id) {
+  retornar bd('tareas').where({ id }).update({ completada: verdadero })
+}
+
+exportar asincrono funcion descompletarTarea(id) {
+  retornar bd('tareas').where({ id }).update({ completada: falso })
+}

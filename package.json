@@ -13,6 +13,8 @@
     "@es-js/vite-plugin-esjs": "^0.1.0-beta.2",
     "@hono/vite-dev-server": "^0.16.0",
     "hono": "^4.5.11",
+    "knex": "^3.1.0",
+    "mysql2": "^3.11.0",
     "prettier": "^3.3.3",
     "prettier-plugin-esjs": "0.1.0-beta.2",
     "vite": "^5.4.3"

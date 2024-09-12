@@ -1,19 +1,119 @@
 importar { Hono } desde 'hono'
 importar { html } desde 'hono/html'
+importar {
+  migraciones,
+  crearTarea,
+  obtenerTareas,
+  eliminarTarea,
+  completarTarea,
+  descompletarTarea,
+} desde './bd.esjs'
 
 exportar const app = crear Hono().basePath('/')
 
-app.get('/', c =>
-  c.html(html`
+app.get('/', asincrono c => {
+  esperar migraciones()
+
+  const tareas = esperar obtenerTareas()
+
+  retornar c.html(html`
     <h1>
-      ¡Hola mundo desde <a href="https://esjs.dev" target="_blank">EsJS</a> +
-      <a href="https://hono.dev" target="_blank">Hono</a>!
+      Lista de Tareas con
+      <a href="https://es.js.org/" target="_blank">EsJS</a>
+      +
+      <a href="https://hono.dev/" target="_blank">Hono</a>
+      +
+      <a href="http://knexjs.org/" target="_blank">Knex</a>
+      +
+      <a href="https://www.mysql.com/" target="_blank">MySQL</a>
     </h1>
-    <ul>
-      <li><a href="/api/hola">/api/hola</a></li>
-    </ul>
-  `),
-)
+
+    <div>
+      <h2>Crear Tarea</h2>
+
+      <form action="/tareas" method="POST">
+        <input type="text" name="nombre" placeholder="Nombre de la tarea" />
+        <input
+          type="text"
+          name="descripcion"
+          placeholder="Descripción de la tarea"
+        />
+        <button type="submit">Crear tarea</button>
+      </form>
+    </div>
+
+    <div>
+      <h2>Tareas</h2>
+
+      <ul>
+        ${tareas.mapear(
+          tarea => html`
+            <li>
+              <div
+                style="${tarea.completada
+                  ? 'text-decoration: line-through;'
+                  : ''}"
+              >
+                <strong> ${tarea.nombre} </strong>
+                <p>${tarea.descripcion}</p>
+                <small>${tarea.fechaCreacion}</small>
+              </div>
+
+              <div style="display: flex; gap: 1rem;">
+                <form action="/tareas/${tarea.id}/completar" method="POST">
+                  <button type="submit">Completar</button>
+                </form>
+
+                <form action="/tareas/${tarea.id}/descompletar" method="POST">
+                  <button type="submit">Descompletar</button>
+                </form>
+
+                <form action="/tareas/${tarea.id}" method="POST">
+                  <button type="submit">Eliminar</button>
+                </form>
+              </div>
+
+              <hr />
+            </li>
+          `,
+        )}
+      </ul>
+    </div>
+  `);
+})
+
+app.post('/tareas', asincrono c => {
+  const cuerpo = esperar c.req.parseBody()
+
+  esperar crearTarea(cuerpo.nombre, cuerpo.descripcion)
+
+  retornar c.redirect('/')
+})
+
+app.post('/tareas/:id', asincrono c => {
+  const { id } = c.req.param()
+
+  esperar eliminarTarea(id)
+
+  retornar c.redirect('/')
+})
+
+app.post('/tareas/:id/completar', asincrono c => {
+  const { id } = c.req.param()
+
+  esperar completarTarea(id)
+
+  retornar c.redirect('/')
+})
+
+app.post('/tareas/:id/descompletar', asincrono c => {
+  const { id } = c.req.param()
+
+  esperar descompletarTarea(id)
+
+  retornar c.redirect('/')
+})
+
 app.get('/api/hola', c => c.json({ mensaje: '¡Hola mundo desde EsJS + Hono!' }))
 
 exportar porDefecto app

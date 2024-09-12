@@ -1,21 +1,6 @@
-# @es-js/crear-hono-app
+# EsJS + Hono + Knex + MySQL
 
-Plantilla para iniciar un proyecto [EsJS](https://esjs.dev/) + [Hono](https://hono.dev/).
+Este proyecto es un ejemplo de cómo crear una aplicación web con [EsJS](https://es.js.org/), [Hono](https://hono.dev/), [Knex](https://knexjs.org/) y [MySQL](https://www.mysql.com/).
 
-## Uso
-
-### Desde GitHub
-
-Utilizando este proyecto como _template_.
-
-### Desde tu computadora
-
-Ejecutando:
-
-```
-npm create esjs hono
-```
-
-### Desde StackBlitz
-
-Utilizando [este enlace](https://stackblitz.com/fork/github/es-js/crear-hono-app?file=api/app.esjs).
+- [Demo](https://esjs-hono-knex-mysql.vercel.app/)
+- [Tutorial](https://es.js.org/integraciones/hono-knex-mysql)
